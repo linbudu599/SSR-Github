@@ -1,0 +1,1 @@
+{"ast":null,"code":"const Index = () => {\n  Index;\n};","map":{"version":3,"sources":["C:/Users/归去来兮/Desktop/ssr-github/src/pages/index.js"],"names":["Index"],"mappings":"AACA,MAAMA,KAAK,GAAG,MAAI;AAChBA,EAAAA,KAAK;AACN,CAFD","sourcesContent":["\r\nconst Index = ()=>{\r\n  Index\r\n}\r\n"]},"metadata":{},"sourceType":"script"}

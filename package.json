@@ -6,14 +6,17 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "koa": "^2.11.0",
+    "koa-router": "^7.4.0",
+    "next": "^9.1.5",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "dev": "nodemon server.js",
+    "build": "next build",
+    "start": "next start",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -30,5 +33,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "chalk": "^3.0.0",
+    "nodemon": "^2.0.2"
   }
 }
