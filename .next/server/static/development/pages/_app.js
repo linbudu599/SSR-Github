@@ -234,6 +234,17 @@ module.exports = _interopRequireDefault;
 
 /***/ }),
 
+/***/ "./node_modules/_antd@3.26.2@antd/dist/antd.css":
+/*!******************************************************!*\
+  !*** ./node_modules/_antd@3.26.2@antd/dist/antd.css ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+
+/***/ }),
+
 /***/ "./node_modules/_core-js@2.6.11@core-js/library/fn/object/assign.js":
 /*!**************************************************************************!*\
   !*** ./node_modules/_core-js@2.6.11@core-js/library/fn/object/assign.js ***!
@@ -2420,6 +2431,18 @@ for (var i = 0; i < DOMIterables.length; i++) {
 
 /***/ }),
 
+/***/ "./node_modules/_next@9.1.5@next/app.js":
+/*!**********************************************!*\
+  !*** ./node_modules/_next@9.1.5@next/app.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./dist/pages/_app */ "./node_modules/_next@9.1.5@next/dist/pages/_app.js")
+
+
+/***/ }),
+
 /***/ "./node_modules/_next@9.1.5@next/dist/next-server/lib/utils.js":
 /*!*********************************************************************!*\
   !*** ./node_modules/_next@9.1.5@next/dist/next-server/lib/utils.js ***!
@@ -2701,14 +2724,35 @@ function createUrl(router) {
 
 /***/ }),
 
+/***/ "./src/pages/_app.js":
+/*!***************************!*\
+  !*** ./src/pages/_app.js ***!
+  \***************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var next_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! next/app */ "./node_modules/_next@9.1.5@next/app.js");
+/* harmony import */ var next_app__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(next_app__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! antd/dist/antd.css */ "./node_modules/_antd@3.26.2@antd/dist/antd.css");
+/* harmony import */ var antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_1__);
+// 重写默认的app.js
+ // 会引入全部的CSS，但同样能够异步分模块加载
+
+
+/* harmony default export */ __webpack_exports__["default"] = (next_app__WEBPACK_IMPORTED_MODULE_0___default.a);
+
+/***/ }),
+
 /***/ 0:
-/*!**********************************!*\
-  !*** multi next/dist/pages/_app ***!
-  \**********************************/
+/*!****************************************!*\
+  !*** multi private-next-pages/_app.js ***!
+  \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! next/dist/pages/_app */"./node_modules/_next@9.1.5@next/dist/pages/_app.js");
+module.exports = __webpack_require__(/*! private-next-pages/_app.js */"./src/pages/_app.js");
 
 
 /***/ }),
