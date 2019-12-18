@@ -7746,18 +7746,21 @@ if (false) {} else {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return CustomApp; });
 /* harmony import */ var next_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! next/app */ "./node_modules/_next@9.1.5@next/app.js");
 /* harmony import */ var next_app__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(next_app__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _components_layout__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/layout */ "./components/layout.js");
-/* harmony import */ var antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! antd/dist/antd.css */ "./node_modules/_antd@3.26.3@antd/dist/antd.css");
-/* harmony import */ var antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
-var __jsx = react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement;
+/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! next/head */ "next/head");
+/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(next_head__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! antd/dist/antd.css */ "./node_modules/_antd@3.26.3@antd/dist/antd.css");
+/* harmony import */ var antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(antd_dist_antd_css__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_4__);
+var __jsx = react__WEBPACK_IMPORTED_MODULE_4___default.a.createElement;
 // 重写默认的app.js
 
- // 会引入全部的CSS，但同样能够异步分模块加载
 
+ // 会引入全部的CSS，但同样能够异步分模块加载
 
 
 
@@ -7784,12 +7787,10 @@ class CustomApp extends next_app__WEBPACK_IMPORTED_MODULE_0___default.a {
       pageProps
     } = this.props;
     console.log(Component, pageProps);
-    return __jsx(react__WEBPACK_IMPORTED_MODULE_3___default.a.Fragment, null, __jsx(_components_layout__WEBPACK_IMPORTED_MODULE_1__["default"], null, __jsx(Component, pageProps)));
+    return __jsx(react__WEBPACK_IMPORTED_MODULE_4___default.a.Fragment, null, __jsx(next_head__WEBPACK_IMPORTED_MODULE_2___default.a, null, __jsx("title", null, "My new cool app")), __jsx(_components_layout__WEBPACK_IMPORTED_MODULE_1__["default"], null, __jsx(Component, pageProps)));
   }
 
 }
-
-/* harmony default export */ __webpack_exports__["default"] = (CustomApp);
 
 /***/ }),
 
@@ -7802,6 +7803,17 @@ class CustomApp extends next_app__WEBPACK_IMPORTED_MODULE_0___default.a {
 
 module.exports = __webpack_require__(/*! private-next-pages/_app.js */"./pages/_app.js");
 
+
+/***/ }),
+
+/***/ "next/head":
+/*!****************************!*\
+  !*** external "next/head" ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("next/head");
 
 /***/ }),
 

@@ -6,6 +6,8 @@
       {
         "libraryName": "antd"
       }
-    ]
+    ],
+    // 预编译CSS
+    ["styled-components", { "ssr": true }]
   ]
 }
