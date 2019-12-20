@@ -7058,14 +7058,14 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 class MyDocument extends next_document__WEBPACK_IMPORTED_MODULE_8___default.a {
   static async getInitialProps(ctx) {
     // 通过将该属性指定为新的方法，使得在初次渲染时能为我们执行一些新的东西
-    const originalRenderPage = ctx.renderPage;
     const sheet = new styled_components__WEBPACK_IMPORTED_MODULE_9__["ServerStyleSheet"]();
+    const originalRenderPage = ctx.renderPage;
 
     try {
       ctx.renderPage = () => originalRenderPage({
         // 增强App与Component（pages页面下的每一个文件）
-        enhanceApp: App => (...props) => // 其实也是HOC
-        sheet.collectStyles(__jsx(App, props)) // enhanceComponent: Component => withLog(Component)
+        // 渲染完APP后产生的css代码会被挂载到sheet对象上
+        enhanceApp: App => props => sheet.collectStyles(__jsx(App, props)) // enhanceComponent: Component => withLog(Component)
 
       });
 
