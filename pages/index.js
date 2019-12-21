@@ -11,7 +11,10 @@ const Index = () => {
       <Button>ANTD BUTTON</Button>
       <p>Index Page</p>
       <Link href="/a?id=1212" as="/a/1212">
-        <a>Go！</a>
+        <a>Go！a</a>
+      </Link>
+      <Link href="/b">
+        <a>Go！b</a>
       </Link>
     </>
   );
