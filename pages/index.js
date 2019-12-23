@@ -5,7 +5,11 @@ import React from "react";
 import { Button } from "antd";
 import Link from "next/link";
 
-const Index = () => {
+import { connect } from "react-redux";
+
+import { addCreators } from "../store";
+
+const Index = ({ counter, user }) => {
   return (
     <>
       <Button>ANTD BUTTON</Button>
@@ -16,7 +20,23 @@ const Index = () => {
       <Link href="/b">
         <a>Go！b</a>
       </Link>
+      <p>counter: {counter}</p>
+      <p>username: {user}</p>
     </>
   );
 };
-export default Index;
+
+const mapStateToProps = state => ({
+  counter: state.count.count,
+  user: state.user.username
+});
+
+const mapDispatchToProps = dispatch => ({
+  // add:(num)=>dispatch({})
+});
+
+Index.getInitialProps = async ({ reduxStore }) => {
+  reduxStore.dispatch(addCreators(555))
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Index);
