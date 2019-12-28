@@ -2,9 +2,9 @@
   const Redis = require("ioredis");
 
   const redis = new Redis({
-    port: 6377,
-    host: "localhost",
-    password: "linbudu"
+    port: 6379,
+    host: "localhost"
+    // password: "linbudu"
   });
   await redis.set("c", "from node.js");
   await redis.setex("d", 10, "expire from node.js");

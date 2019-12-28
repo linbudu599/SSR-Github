@@ -1,7 +1,7 @@
 const withCss = require("@zeit/next-css");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const { ANALYZE } = process.env;
-
+const oauthConfig = require("./config.js");
 if (typeof require !== "undefined") {
   require.extensions[".css"] = file => {};
 }
@@ -74,6 +74,9 @@ const configs = {
   }
 };
 
+const GITHUB_OAUTH_URL = "https://github.com/login/oauth/authorize";
+const SCOPE = "user";
+const { client_id, client_secret } = oauthConfig.github;
 // 产生一个配置项,使用Object.assign
 module.exports = withCss({
   env: {
@@ -84,6 +87,8 @@ module.exports = withCss({
     nodeSecret: process.env.SECRET
   },
   publicRuntimeConfig: {
-    staticFolder: "/static"
+    staticFolder: "/static",
+    GITHUB_OAUTH_URL,
+    OAUTH_URL: `${GITHUB_OAUTH_URL}?client_id=${client_id}&scope=${SCOPE}`
   }
 });
