@@ -2,8 +2,14 @@
 import App from "next/app";
 import Layout from "../components/layout";
 import Head from "next/head";
+// 会引入全部的CSS，但同样能够异步分模块加载
 import "antd/dist/antd.css";
 import React from "react";
+import { Provider } from "react-redux";
+import store from "../store";
+
+// import testHoc from "../lib/HOC-test";
+import withRedux from "../lib/with-redux";
 
 class CustomApp extends App {
   state = {
@@ -32,10 +38,13 @@ class CustomApp extends App {
           <title>My new cool app</title>
         </Head>
         <Layout>
-          <Component {...pageProps} />
+          <Provider store={reduxStore}>
+            <Component {...pageProps} />
+          </Provider>
         </Layout>
       </>
     );
   }
 }
-export default CustomApp;
+export default withRedux(CustomApp);
+// export default CustomApp;
