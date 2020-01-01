@@ -4,7 +4,9 @@ import Layout from "../components/layout";
 import Head from "next/head";
 import "antd/dist/antd.css";
 import React from "react";
-
+import withRedux from "../lib/with-redux";
+import reduxStore from "../store";
+import { Provider } from "react-redux";
 class CustomApp extends App {
   state = {
     context: "vaaaalue"
@@ -31,11 +33,13 @@ class CustomApp extends App {
         <Head>
           <title>My new cool app</title>
         </Head>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <Provider store={reduxStore}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </Provider>
       </>
     );
   }
 }
-export default CustomApp;
+export default withRedux(CustomApp);

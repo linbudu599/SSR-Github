@@ -1,9 +1,23 @@
 import React, { useState, useCallback } from "react";
+import getConfig from "next/config";
 import Link from "next/link";
-import { Layout, Button, Icon, Input, Avatar } from "antd";
+import { logout } from "../store";
+
+import {
+  Layout,
+  Button,
+  Icon,
+  Input,
+  Avatar,
+  Tooltip,
+  Dropdown,
+  Menu
+} from "antd";
 import Container from "./Container";
+import { connect } from "react-redux";
 const { Header, Content, Footer } = Layout;
 const { Search } = Input;
+const { publicRuntimeConfig } = getConfig();
 
 const githubIconStyle = {
   color: "white",
@@ -21,9 +35,8 @@ const Comp = ({ color, children, style }) => (
   <div style={{ color, ...style }}>{children}</div>
 );
 
-export default ({ children }) => {
+const LayoutComp = ({ children, user, logout }) => {
   const [search, setSearch] = useState("");
-
   const handleInputSearch = useCallback(
     event => {
       setSearch(event.target.value);
@@ -32,6 +45,21 @@ export default ({ children }) => {
   );
 
   const handleOnSearch = useCallback(() => {}, []);
+  const handleLogout = useCallback(() => {
+    logout();
+  }, [logout]);
+
+  const userDropDown = () => {
+    return (
+      <Menu>
+        <Menu.Item>
+          {/* 应当是围绕着store进行 */}
+          <a onClick={handleLogout}>登出</a>
+        </Menu.Item>
+      </Menu>
+    );
+  };
+
   return (
     <>
       <Layout className="layout">
@@ -52,7 +80,19 @@ export default ({ children }) => {
             </div>
             <div className="header-right">
               <div className="user">
-                <Avatar size={40} icon={"user"} />
+                {user && user.id ? (
+                  <Dropdown overlay={userDropDown}>
+                    <a href="/">
+                      <Avatar size={40} src={user.avatar_url} />
+                    </a>
+                  </Dropdown>
+                ) : (
+                  <Tooltip title="点击登录">
+                    <a href={publicRuntimeConfig.OAUTH_URL}>
+                      <Avatar size={40} icon="user" />
+                    </a>
+                  </Tooltip>
+                )}
               </div>
             </div>
           </Container>
@@ -90,3 +130,11 @@ export default ({ children }) => {
     </>
   );
 };
+export default connect(
+  function mapState(state) {
+    return { user: state.user };
+  },
+  function mapReducer(dispatch) {
+    return { logout: () => dispatch(logout()) };
+  }
+)(LayoutComp);

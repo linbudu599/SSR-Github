@@ -82,7 +82,7 @@ app.prepare().then(() => {
 
   router.get("/set", async ctx => {
     ctx.session.user = {
-      name: "lunbudu_session",
+      name: "linbudu_session",
       age: "21"
     };
     ctx.body = "set session success";
@@ -98,9 +98,7 @@ app.prepare().then(() => {
   // 全局中间件
   server.use(async (ctx, next) => {
     // 这里处理的是node原生的req、res对象！
-    // ctx.cookies.set("id", visitCount);
-    // visitCount++;
-    // console.log(visitCount);
+    ctx.req.session = ctx.session;
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
   });
