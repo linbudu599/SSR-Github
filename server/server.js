@@ -12,7 +12,8 @@ const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-const auth = require("../server/auth");
+const auth = require("./auth");
+const api = require("./api");
 
 const RedisSessionStore = require("./session-store");
 
@@ -48,6 +49,7 @@ app.prepare().then(() => {
 
   // 处理github oauth登陆
   auth(server);
+  api(server);
 
   router.get("/a/:id", async ctx => {
     const id = ctx.params.id;

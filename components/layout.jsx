@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import getConfig from "next/config";
 import Link from "next/link";
 import { logout } from "../store";
-import { withRouter } from "next/router";
+import { withRouter, Router } from "next/router";
 import axios from "axios";
 
 import {
@@ -38,7 +38,9 @@ const Comp = ({ color, children, style }) => (
 );
 
 const LayoutComp = ({ children, user, logout, router }) => {
-  const [search, setSearch] = useState("");
+  const ssrQuery = router.query && router.query.query;
+
+  const [search, setSearch] = useState(ssrQuery || "");
   const handleInputSearch = useCallback(
     event => {
       setSearch(event.target.value);
@@ -46,7 +48,10 @@ const LayoutComp = ({ children, user, logout, router }) => {
     [setSearch]
   );
 
-  const handleOnSearch = useCallback(() => {}, []);
+  const handleOnSearch = useCallback(() => {
+    Router.push(`/search?query=${search}`);
+  }, [search]);
+
   const handleLogout = useCallback(() => {
     logout();
   }, [logout]);
@@ -89,7 +94,9 @@ const LayoutComp = ({ children, user, logout, router }) => {
           <Container renderer={<div className="header-inner" />}>
             <div className="header-left">
               <div className="logo">
-                <Icon type="github" style={githubIconStyle} />
+                <Link href="/">
+                  <Icon type="github" style={githubIconStyle} />
+                </Link>
               </div>
               <div>
                 <Search
@@ -144,11 +151,14 @@ const LayoutComp = ({ children, user, logout, router }) => {
         <style jsx global>{`
           #__next,
           .ant-layout {
-            height: 100%;
+            min-height: 100%;
           }
           .ant-layout-header {
             padding-left: 0;
             padding-right: 0;
+          }
+          .ant-layout-content {
+            background: #ffffff;
           }
         `}</style>
       </Layout>
