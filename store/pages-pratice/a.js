@@ -2,11 +2,11 @@ import { withRouter } from "next/router";
 import React from "react";
 import styled from "styled-components";
 import dynamic from "next/dynamic";
-import originalComp from "../components/lazzzy";
+import originalComp from "../../components/lazzzy";
 
 import getConfig from "next/config";
 
-const LazyComp = dynamic(import("../components/lazzzy"));
+const LazyComp = dynamic(import("../../components/lazzzy"));
 
 const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
 

@@ -2,6 +2,8 @@ import React, { useState, useCallback } from "react";
 import getConfig from "next/config";
 import Link from "next/link";
 import { logout } from "../store";
+import { withRouter } from "next/router";
+import axios from "axios";
 
 import {
   Layout,
@@ -35,7 +37,7 @@ const Comp = ({ color, children, style }) => (
   <div style={{ color, ...style }}>{children}</div>
 );
 
-const LayoutComp = ({ children, user, logout }) => {
+const LayoutComp = ({ children, user, logout, router }) => {
   const [search, setSearch] = useState("");
   const handleInputSearch = useCallback(
     event => {
@@ -48,6 +50,26 @@ const LayoutComp = ({ children, user, logout }) => {
   const handleLogout = useCallback(() => {
     logout();
   }, [logout]);
+
+  const handleGoOAuth = useCallback(
+    e => {
+      e.preventDefault();
+      axios
+        .get(`/pre-auth?url=${router.asPath}`)
+        .then(res => {
+          if (res.status === 200) {
+            // eslint-disable-next-line
+            location.href = publicRuntimeConfig.OAUTH_URL;
+          } else {
+            console.log("pre auth failed");
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    [router.asPath]
+  );
 
   const userDropDown = () => {
     return (
@@ -88,7 +110,10 @@ const LayoutComp = ({ children, user, logout }) => {
                   </Dropdown>
                 ) : (
                   <Tooltip title="点击登录">
-                    <a href={publicRuntimeConfig.OAUTH_URL}>
+                    <a
+                      href={publicRuntimeConfig.OAUTH_URL}
+                      onClick={handleGoOAuth}
+                    >
                       <Avatar size={40} icon="user" />
                     </a>
                   </Tooltip>
@@ -137,4 +162,4 @@ export default connect(
   function mapReducer(dispatch) {
     return { logout: () => dispatch(logout()) };
   }
-)(LayoutComp);
+)(withRouter(LayoutComp));

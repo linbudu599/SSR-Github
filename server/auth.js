@@ -35,7 +35,9 @@ module.exports = server => {
           headers: { Authorization: `${token_type} ${access_token}` }
         });
         ctx.session.userInfo = userInfoRes.data;
-        ctx.redirect("/");
+
+        ctx.redirect((ctx.session && ctx.session.urlBeforeOAuth) || "/");
+        ctx.session.urlBeforeOAuth = "";
       } else {
         ctx.body = `get token failed ${res}`;
       }
@@ -43,12 +45,29 @@ module.exports = server => {
       await next();
     }
   });
+
+  // 登出
   server.use(async (ctx, next) => {
     const path = ctx.path;
     const method = ctx.method;
     if (path === "/logout" && method === "POST") {
       ctx.session = null;
       ctx.body = "logout success";
+    } else {
+      await next();
+    }
+  });
+
+  // 维持页面访问
+  server.use(async (ctx, next) => {
+    const path = ctx.path;
+    const method = ctx.method;
+    if (path === "/pre-auth" && method === "GET") {
+      // 进行跳转前的url
+      const { url } = ctx.query;
+      ctx.session.urlBeforeOAuth = url;
+      console.log(url);
+      ctx.body = "ready";
     } else {
       await next();
     }
