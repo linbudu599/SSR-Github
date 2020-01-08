@@ -1,13 +1,22 @@
 const BASE_URL = "https://api.github.com";
 const axios = require("axios");
-const api = require("../lib/api");
+const { requestGithub, request } = require("../lib/api");
 
 module.exports = server => {
   server.use(async (ctx, next) => {
-    const { path, url, method, session } = ctx;
+    const {
+      path,
+      url,
+      method,
+      session,
+      request: { body }
+    } = ctx;
     const githubAuth = session && session.githubAuth;
+
     let headers = {};
+
     if (path.startsWith("/github/")) {
+      console.log(body);
       const tokenInfo = githubAuth.split("&");
       const token = tokenInfo[0].split("=")[1];
       const token_type = tokenInfo[2].split("=")[1];
@@ -16,10 +25,10 @@ module.exports = server => {
         headers["Authorization"] = `${token_type} ${token}`;
       }
 
-      const result = await api.requestGithub(
+      const result = await requestGithub(
         method,
         url.replace("/github/", "/"),
-        {},
+        body || {},
         headers
       );
       const { status, data } = result;

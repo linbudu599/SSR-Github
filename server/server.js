@@ -17,6 +17,8 @@ const api = require("./api");
 
 const RedisSessionStore = require("./session-store");
 
+const koaBody = require("koa-body");
+
 // let visitCount = 0;
 
 // 传入配置创建redis客户端
@@ -29,6 +31,8 @@ app.prepare().then(() => {
 
   // 会被依次调用
   server.keys = ["keyyyyyy"];
+
+  server.use(koaBody());
 
   const SESSION_CONFIG = {
     key: "test_cookie_name",
@@ -47,8 +51,9 @@ app.prepare().then(() => {
   // 报错cannot set ...after they are sent to clent
   // 在全局中间件中已经handle了，即请求已经被回传给客户端，session中间件还继续写cookie
 
-  // 处理github oauth登陆
+  // 处理github OAuth登陆
   auth(server);
+  // 代理GitHub Api
   api(server);
 
   router.get("/a/:id", async ctx => {

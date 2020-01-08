@@ -31,6 +31,9 @@ class CustomApp extends App {
     Router.events.on("routeChangeStart", this.startLoading);
     Router.events.on("routeChangeComplete", this.finishLoading);
     Router.events.on("routeChangeError", this.finishLoading);
+    axios.get("/github/search/repositories?q=react").then((res)=>{
+      console.log(res)
+    })
   }
   componentWillUnmount() {
     Router.events.off("routeChangeStart", this.startLoading);

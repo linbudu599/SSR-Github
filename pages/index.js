@@ -1,14 +1,18 @@
+import { useEffect } from "react";
 const axios = require("axios");
 const api = require("../lib/api");
 
 const Index = () => {
+  useEffect(() => {
+    axios.post("/github/test", { test: "test-value" });
+  });
   return <span>Index</span>;
 };
 
+// 客户端页面跳转时会调用，同时如果服务端渲染时访问index页面也会调用
+// ssr时处于nodejs环境
 Index.getInitialProps = async ({ ctx }) => {
   // const result = await axios
-  //   // 如果在服务器中发送，会带上https://127.0.0.1:80
-  //   // 需要分开处理服务端与客户端渲染
   //   .get("/github/search/repositories?q=react")
   //   .then(res => {
   //     console.log(res);
@@ -26,6 +30,8 @@ Index.getInitialProps = async ({ ctx }) => {
     ctx.req,
     ctx.res
   );
+
+  return { data: result.data };
 };
 
 export default Index;
