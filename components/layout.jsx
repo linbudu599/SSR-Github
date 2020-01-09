@@ -131,11 +131,7 @@ const LayoutComp = ({ children, user, logout, router }) => {
         </Header>
         <Content style={{ padding: "0 50px" }}>
           {/* 也可以renderer={<div></div>} */}
-          <Container
-            renderer={<Comp color="red" style={{ fontSize: "180px" }} />}
-          >
-            {children}
-          </Container>
+          <Container renderer={<Comp />}>{children}</Container>
         </Content>
         <Footer style={footerStyle}>Ant Design ©2018 Created by Ant UED</Footer>
         <style jsx>{`

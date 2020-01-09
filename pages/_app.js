@@ -65,12 +65,7 @@ class CustomApp extends App {
         <Provider store={reduxStore}>
           {this.state.loading ? <Loading /> : null}
           <Layout>
-            <Link href="/">
-              <a>Index</a>
-            </Link>
-            <Link href="/detail">
-              <a>Detail</a>
-            </Link>
+           
             <Component {...pageProps} />
           </Layout>
         </Provider>

@@ -1,6 +1,6 @@
 import React from "react";
 // 这实际上是initializeStore方法
-import createStore from "../store";
+import createStore from ".";
 
 // 判断是否有服务端
 const isServer = typeof window === "undefined";
