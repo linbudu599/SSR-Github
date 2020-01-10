@@ -1,16 +1,48 @@
 import React, { useEffect } from "react";
-import { Button, Icon } from "antd";
+import { Button, Icon, Tabs } from "antd";
 import getConfig from "next/config";
 import { connect } from "react-redux";
 import Repo from "../components/repo";
+import Router, { withRouter } from "next/router";
+import LRU from "lru-cache";
 
 const axios = require("axios");
 const api = require("../lib/api");
 
 const { publicRuntimeConfig } = getConfig();
 
-const Index = ({ userRepos, userStarredRepos, user }) => {
+const cache = new LRU({
+  // 十分钟内不使用（.get()等），即会删除缓存
+  maxAge: 1000 * 60 * 10
+});
+
+// 公共变量与缓存，需要考虑是否是服务端
+// 如果在服务端也执行缓存，则不同用户都会得到相同缓存
+
+const isServer = typeof window === "undefined";
+
+const Index = ({ userRepos, userStarredRepos, user, router }) => {
   // console.log(userRepos, userStarredRepos, user);
+
+  const tabKey = router.query.key || "1";
+
+  const handleTabChange = activeKey => {
+    Router.push(`/?key=${activeKey}`);
+  };
+
+  useEffect(() => {
+    if (!isServer) {
+      // 缓存在客户端
+      // 可能是null
+      if (userRepos) {
+        cache.set("userRepos", userRepos);
+      }
+      if (userStarredRepos) {
+        cache.set("userStarredRepos", userStarredRepos);
+      }
+    }
+    return () => {};
+  }, [userRepos, userStarredRepos]);
 
   if (!user || !user.id) {
     return (
@@ -47,9 +79,22 @@ const Index = ({ userRepos, userStarredRepos, user }) => {
           </p>
         </div>
         <div className="user-repos">
-          {userRepos.map(repo => {
-            return <Repo repo={repo} />;
-          })}
+          <Tabs
+            defaultActiveKey={tabKey}
+            onChange={handleTabChange}
+            animated={false}
+          >
+            <Tabs.TabPane tab="你拥有的仓库" key="1">
+              {userRepos.map((repo, idx) => {
+                return <Repo idx={idx} repo={repo} />;
+              })}
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="你star的仓库" key="2">
+              {userStarredRepos.map((repo, idx) => {
+                return <Repo idx={idx} repo={repo} />;
+              })}
+            </Tabs.TabPane>
+          </Tabs>
         </div>
         <style jsx>{`
           .root {
@@ -100,6 +145,14 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
       isLogin: false
     };
   }
+  if (!isServer) {
+    if (cache.get("userRepos") && cache.get("userStarredRepos")) {
+      return {
+        userRepos: cache.get("userRepos"),
+        userStarredRepos: cache.get("userStarredRepos")
+      };
+    }
+  }
 
   // req与res只有在ssr时有
   const userRepos = await api.request(
@@ -123,7 +176,9 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
     isLogin: true
   };
 };
-
-export default connect(function mapStateToProps(state) {
-  return { user: state.user };
-})(Index);
+// 注意withRouter要放在外面
+export default withRouter(
+  connect(function mapStateToProps(state) {
+    return { user: state.user };
+  })(Index)
+);
