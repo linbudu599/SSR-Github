@@ -85,13 +85,13 @@ const Index = ({ userRepos, userStarredRepos, user, router }) => {
             animated={false}
           >
             <Tabs.TabPane tab="你拥有的仓库" key="1">
-              {userRepos.map((repo, idx) => {
-                return <Repo idx={idx} repo={repo} />;
+              {userRepos.map(repo => {
+                return <Repo key={repo.id} repo={repo} />;
               })}
             </Tabs.TabPane>
             <Tabs.TabPane tab="你star的仓库" key="2">
-              {userStarredRepos.map((repo, idx) => {
-                return <Repo idx={idx} repo={repo} />;
+              {userStarredRepos.map(repo => {
+                return <Repo key={repo.id} repo={repo} />;
               })}
             </Tabs.TabPane>
           </Tabs>

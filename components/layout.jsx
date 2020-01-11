@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import getConfig from "next/config";
 import Link from "next/link";
 import { logout } from "../store";
-import { withRouter, Router } from "next/router";
+import Router, { withRouter } from "next/router";
 import axios from "axios";
 
 import {
