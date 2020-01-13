@@ -1,14 +1,14 @@
-import React, { useCallback, memo } from "react";
+import React, { memo, isValidElement } from "react";
 import { withRouter } from "next/router";
-import { Row, Col, List } from "antd";
+import { Row, Col, List, Pagination } from "antd";
 import Link from "next/link";
-const { Item } = List;
-import Router from "next/router";
 import Repo from "../components/repo";
+const { Item } = List;
 
 const api = require("../lib/api");
 
-const LANGUAGE = ["JavaScript", "HTML", "CSS", "TypeScript", "Java", "Rust"];
+const LANGUAGES = ["JavaScript", "HTML", "CSS", "TypeScript", "Java", "Rust"];
+
 const SORT_TYPES = [
   {
     name: "Best Match"
@@ -35,21 +35,21 @@ const SORT_TYPES = [
   }
 ];
 
-const FilterLink = memo(({ name, ...quert_conditions }) => {
-  const handleSearch = () => {
-    Router.push({
-      pathname: "/search",
-      query: { ...quert_conditions }
-    });
-  };
-  let queryWords = `?q=${query}`;
-  if (lang) queryWords += `+lang=${lang}`;
-  if (sort) queryWords += `$sort=${sort}$order=${order || "desc"}`;
+const per_page = 20;
+
+const FilterLink = memo(({ name, query, lang, sort, order, page }) => {
+  let queryWords = `?query=${query}`;
+  if (lang) queryWords += `&lang=${lang}`;
+  if (sort) queryWords += `&sort=${sort}&order=${order || "desc"}`;
+  if (page) queryWords += `&page=${page}`;
+
+  queryWords += `&per_page=${per_page}`;
 
   return (
     // 为了SEO友好，应当是可点击的
     <Link href={`/search${queryWords}`}>
-      <a>{name}</a>
+      {/* Pagination组件的name属性可能是一个组件 */}
+      {isValidElement(name) ? name : <a>{name}</a>}
     </Link>
   );
 });
@@ -69,11 +69,9 @@ const selectedItemStyle = {
  * page：分页页面
  */
 const Search = ({ router, repos }) => {
-  console.log(repos);
+  const { ...query_conditions } = router.query;
 
-  const { ...quert_conditions } = router.query;
-
-  const { query, lang, sort, order } = router.query;
+  const { lang, sort, order, page } = router.query;
 
   return (
     <>
@@ -84,7 +82,7 @@ const Search = ({ router, repos }) => {
               bordered
               header={<span className="list-header">通过语言筛选</span>}
               style={{ marginBottom: 20 }}
-              dataSource={LANGUAGE}
+              dataSource={LANGUAGES}
               renderItem={item => {
                 const selected = lang === item;
                 return (
@@ -93,7 +91,7 @@ const Search = ({ router, repos }) => {
                       <span>{item}</span>
                     ) : (
                       <FilterLink
-                        {...quert_conditions}
+                        {...query_conditions}
                         lang={item}
                         name={item}
                       />
@@ -112,7 +110,7 @@ const Search = ({ router, repos }) => {
                 if (item.name === "Best Match" && !sort) {
                   selected = true;
                   // 否则选中此时和url——query中相匹配的项
-                } else if (item.value === sort && item.order == order) {
+                } else if (item.value === sort && item.order === order) {
                   selected = true;
                 }
                 return (
@@ -121,9 +119,9 @@ const Search = ({ router, repos }) => {
                       <span>{item.name}</span>
                     ) : (
                       <FilterLink
-                        {...quert_conditions}
-                        sort={item.order}
-                        value={item.value}
+                        {...query_conditions}
+                        sort={item.value}
+                        order={item.order}
                         name={item.name}
                       />
                     )}
@@ -137,6 +135,29 @@ const Search = ({ router, repos }) => {
             {repos.items.map(repo => (
               <Repo repo={repo} key={repo.id} />
             ))}
+            <div className="pagination">
+              <Pagination
+                pageSize={per_page}
+                current={Number(page) || 1}
+                // github api限制 对于每个query最多返回1000条结果
+                total={1000}
+                onChange={() => {}}
+                itemRender={(page, type, ol) => {
+                  let p;
+                  if (type === "page") {
+                    p = page;
+                  } else if (type === "prev") {
+                    p = page - 1;
+                  } else {
+                    p = page + 1;
+                  }
+                  const name = type === "page" ? page : ol;
+                  return (
+                    <FilterLink {...query_conditions} page={p} name={name} />
+                  );
+                }}
+              />
+            </div>
           </Col>
         </Row>
         <style jsx>{`
@@ -147,10 +168,14 @@ const Search = ({ router, repos }) => {
             font-weight: 800;
             font-size: 16px;
           }
-          .repos-titla {
+          .repos-title {
             border-bottom: 1px solid #eee;
             font-size: 24px;
             line-height: 50px;
+          }
+          .pagination {
+            padding: 20px;
+            text-align: center;
           }
         `}</style>
       </div>
@@ -158,8 +183,10 @@ const Search = ({ router, repos }) => {
   );
 };
 
+// 获取搜索条件
 Search.getInitialProps = async ({ ctx }) => {
   const { query, sort, lang, order, page } = ctx.query;
+  console.log(query, sort, lang, order, page);
   if (!query) {
     return {
       repos: { total_count: 0 }
@@ -168,8 +195,9 @@ Search.getInitialProps = async ({ ctx }) => {
 
   let queryWords = `?q=${query}`;
   if (lang) queryWords += `+language:${lang}`;
-  if (sort) queryWords += `$sort=${sort}$order=${order || "desc"}`;
-  if (page) queryWords += `$page=${page}`;
+  if (sort) queryWords += `&sort=${sort}&order=${order || "desc"}`;
+  if (page) queryWords += `&page=${page}`;
+  queryWords += `&per_page=${per_page}`;
 
   const result = await api.request(
     {

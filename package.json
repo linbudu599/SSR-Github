@@ -31,7 +31,7 @@
     "webpack-bundle-analyzer": "^3.6.0"
   },
   "scripts": {
-    "dev": "cross-env SECRET=secret-in-env node server/server.js",
+    "dev": "cross-env SECRET=secret-in-env node --inspect  server/server.js",
     "build": "cross-env ANALYZE=1  next build",
     "eject": "react-scripts eject"
   },
