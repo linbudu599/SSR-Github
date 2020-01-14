@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import Repo from "../components/repo";
 import Router, { withRouter } from "next/router";
 import LRU from "lru-cache";
-
+import { setCache, getCache, cacheArray } from "../lib/repo-basic-cache";
 const axios = require("axios");
 const api = require("../lib/api");
 
@@ -44,6 +44,12 @@ const Index = ({ userRepos, userStarredRepos, user, router }) => {
     return () => {};
   }, [userRepos, userStarredRepos]);
 
+  useEffect(() => {
+    if (!isServer) {
+      cacheArray(userRepos);
+      cacheArray(userStarredRepos);
+    }
+  });
   if (!user || !user.id) {
     return (
       <div className="root">

@@ -9,7 +9,7 @@ import reduxStore from "../store";
 import Link from "next/link";
 import { Provider } from "react-redux";
 import Loading from "../components/loading";
-import Container from "../components//Container";
+import Container from "../components/Container";
 import Router from "next/router";
 import axios from "axios";
 class CustomApp extends App {

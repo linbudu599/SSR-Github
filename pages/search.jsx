@@ -1,8 +1,9 @@
-import React, { memo, isValidElement } from "react";
+import React, { memo, isValidElement, useEffect } from "react";
 import { withRouter } from "next/router";
 import { Row, Col, List, Pagination } from "antd";
 import Link from "next/link";
 import Repo from "../components/repo";
+import { setCache, getCache, cacheArray } from "../lib/repo-basic-cache";
 const { Item } = List;
 
 const api = require("../lib/api");
@@ -36,6 +37,7 @@ const SORT_TYPES = [
 ];
 
 const per_page = 20;
+const isServer = typeof window === "undefined";
 
 const FilterLink = memo(({ name, query, lang, sort, order, page }) => {
   let queryWords = `?query=${query}`;
@@ -73,6 +75,12 @@ const Search = ({ router, repos }) => {
 
   const { lang, sort, order, page } = router.query;
 
+  useEffect(() => {
+    if (!isServer) {
+      cacheArray(repos.items);
+    }
+    return () => {};
+  });
   return (
     <>
       <div className="root">

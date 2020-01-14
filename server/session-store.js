@@ -14,7 +14,11 @@ class RedisStore extends Store {
     return content;
   }
 
-  async set(session, { sid = this.getID(24), maxAge = 1000000 } = {}, ctx) {
+  async set(
+    session,
+    { sid = this.getID(24), maxAge = 10000000000000 } = {},
+    ctx
+  ) {
     console.log(`set session ${JSON.stringify(session)}`);
     try {
       await this.redis.set(
