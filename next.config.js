@@ -1,7 +1,10 @@
 const withCss = require("@zeit/next-css");
+const webpack = require("webpack");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
+const withBundleAnalyzer = require("@zeit/next-bundle-analyzer");
 const { ANALYZE } = process.env;
 const oauthConfig = require("./config.js");
+
 if (typeof require !== "undefined") {
   require.extensions[".css"] = file => {};
 }
@@ -78,17 +81,34 @@ const GITHUB_OAUTH_URL = "https://github.com/login/oauth/authorize";
 const SCOPE = "user";
 const { client_id, client_secret } = oauthConfig.github;
 // 产生一个配置项,使用Object.assign
-module.exports = withCss({
-  env: {
-    customVal: "linbudu"
-  },
-  serverRuntimeConfig: {
-    mySecret: "linbudu-secret",
-    nodeSecret: process.env.SECRET
-  },
-  publicRuntimeConfig: {
-    staticFolder: "/static",
-    GITHUB_OAUTH_URL,
-    OAUTH_URL: `${GITHUB_OAUTH_URL}?client_id=${client_id}&scope=${SCOPE}`
-  }
-});
+module.exports = withBundleAnalyzer(
+  withCss({
+    webpack(config) {
+      config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
+      return config;
+    },
+    env: {
+      customVal: "linbudu"
+    },
+    serverRuntimeConfig: {
+      mySecret: "linbudu-secret",
+      nodeSecret: process.env.SECRET
+    },
+    publicRuntimeConfig: {
+      staticFolder: "/static",
+      GITHUB_OAUTH_URL,
+      OAUTH_URL: `${GITHUB_OAUTH_URL}?client_id=${client_id}&scope=${SCOPE}`
+    },
+    analyzeBrowser: ["browser", "both"].includes(process.env.BUNDLE_ANALYZE),
+    BundleAnalyzerConfig: {
+      server: {
+        mode: "static",
+        reportFileName: "../bundle/server/server.html"
+      },
+      browser: {
+        mode: "static",
+        reportFileName: "../bundle/server/client.html"
+      }
+    }
+  })
+);

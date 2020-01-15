@@ -5,8 +5,7 @@ import { connect } from "react-redux";
 import Repo from "../components/repo";
 import Router, { withRouter } from "next/router";
 import LRU from "lru-cache";
-import { setCache, getCache, cacheArray } from "../lib/repo-basic-cache";
-const axios = require("axios");
+import { cacheArray } from "../lib/repo-basic-cache";
 const api = require("../lib/api");
 
 const { publicRuntimeConfig } = getConfig();

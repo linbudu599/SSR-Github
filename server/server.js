@@ -19,10 +19,12 @@ const RedisSessionStore = require("./session-store");
 
 const koaBody = require("koa-body");
 
-// let visitCount = 0;
-
+const atob = require("atob");
 // 传入配置创建redis客户端
 // const redis = new Redis();
+
+// 为node全局增加方法
+global.atob = atob;
 
 // 等待编译完成pages下所有页面
 app.prepare().then(() => {
