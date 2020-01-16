@@ -1,14 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import { Icon } from "antd";
-import moment from "moment";
+import { getLastUpdated } from "../lib/util";
 
 const getLicense = license => {
   return license ? `${license.spdx_id} licenese` : "";
-};
-
-const timeParser = time => {
-  return moment(time).fromNow();
 };
 
 export default ({ repo }) => {
@@ -25,7 +21,7 @@ export default ({ repo }) => {
           {repo.license ? (
             <span className="license">{getLicense(repo.license)}</span>
           ) : null}
-          <span className="last-updated">{timeParser(repo.updated_at)}</span>
+          <span className="last-updated">{repo.updated_at}</span>
           <span className="open-issues">
             {repo.open_issues_count} open issues
           </span>
