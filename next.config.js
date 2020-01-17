@@ -58,6 +58,13 @@ const configs = {
     }
     return config;
   },
+  exportPathMap: async defaultMap => {
+    return {
+      ...defaultMap,
+      // <Link href="repos?page=2" as="/repos/2">
+      "/repos/2": { pahe: "/repos", query: { page: 2 } }
+    };
+  },
   webpackDevMiddleware: config => {
     return config;
   },

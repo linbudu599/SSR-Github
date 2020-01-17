@@ -5,7 +5,7 @@ import api from "../lib/api";
 
 const { Option } = Select;
 
-const SearchUser = ({ onChange, initValue }) => {
+const SearchUser = ({ onChange, value }) => {
   const latestFetchId = useRef(0);
   const [fetching, setFetching] = useState(false);
   const [options, setOptions] = useState([]);
@@ -21,24 +21,24 @@ const SearchUser = ({ onChange, initValue }) => {
       // 清空之前的用户数据，开始获取新的
       setOptions([]);
 
-      // 这个操作肯定是在客户端进行的，所以调用时无需传入req、res
-      const userData = await api.request({
-        url: `/search/users&q=${value}`
-      });
-
-      // 如果不等，则说明前一次的请求结果可以被抛弃了
-      // 上一次是1，而这一次已经是2了
-      if (fetchId !== latestFetchId.current) {
-        return;
-      }
-      console.log(userData);
-      const data = userData.data.items.map(({ login }) => ({
-        text: login,
-        value: login
-      }));
-
-      setFetching(false);
-      setOptions(data);
+      api
+        .request({
+          url: `/search/users?q=${value}`
+        })
+        .then(res => {
+          console.log(res);
+          // 如果不等，则说明前一次的请求结果可以被抛弃了
+          //   // 上一次是1，而这一次已经是2了
+          if (fetchId !== latestFetchId.current) {
+            return;
+          }
+          const data = res.data.items.map(({ login }) => ({
+            text: login,
+            value: login
+          }));
+          setFetching(false);
+          setOptions(data);
+        });
     }, 500),
     []
   );
@@ -59,15 +59,15 @@ const SearchUser = ({ onChange, initValue }) => {
       }
       filterOption={false}
       placeholder="创建者"
-      value={initValue}
       onSearch={fetchUser}
+      value={value}
       onChange={handleOptChange}
       allowClear={true}
     >
-      {options.map(opt => {
+      {options.map(({ value, text }) => {
         return (
-          <Option value={opt.value} key={opt.value}>
-            {opt.text}
+          <Option value={value} key={value}>
+            {text}
           </Option>
         );
       })}

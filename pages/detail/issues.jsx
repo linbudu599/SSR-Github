@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Avatar, Button, Select, Spin } from "antd";
 import withRepoBasic from "../../components/with-repo-basic";
 import dynamic from "next/dynamic";
@@ -10,6 +10,8 @@ import SearchUser from "../../components/SearchUser";
 const MdRenderer = dynamic(() => import("../../components/MarkdownRenderer"));
 
 const { Option } = Select;
+
+const CACHE = {};
 
 const Detail = ({ issue }) => {
   return (
@@ -44,7 +46,7 @@ const IssueItem = ({ issue }) => {
   }, []);
 
   return (
-    <div>
+    <>
       <div className="issue">
         <Button
           type="primary"
@@ -60,10 +62,13 @@ const IssueItem = ({ issue }) => {
         <div className="main-info">
           <h6>
             <span>{issue.title}</span>
-            <p className="sub-info">
-              <span>Updated At {getLastUpdated(issue.updated_at)}</span>
-            </p>
+            {issue.labels.map(label => (
+              <Label label={label} key={label.id} />
+            ))}
           </h6>
+          <p className="sub-info">
+            <span>Updated At {getLastUpdated(issue.updated_at)}</span>
+          </p>
         </div>
         <style jsx>{`
           .issue {
@@ -96,9 +101,30 @@ const IssueItem = ({ issue }) => {
         `}</style>
       </div>
       {showDetail ? <Detail issue={issue} /> : null}
-    </div>
+    </>
   );
 };
+
+const Label = ({ label }) => {
+  return (
+    <>
+      <span className="label" style={{ backgroundColor: `#${label.color}` }}>
+        {label.name}
+      </span>
+      <style jsx>{`
+        .label {
+          display: inline-block;
+          line-height: 20px;
+          margin-left: 15px;
+          padding: 3px;
+          border-radius: 3px;
+          font-size: 14px;
+        }
+      `}</style>
+    </>
+  );
+};
+const isServer = typeof window === "undefined";
 
 export const Issues = ({ initIssues, labels, owner, name }) => {
   const [creator, setCreator] = useState();
@@ -106,6 +132,12 @@ export const Issues = ({ initIssues, labels, owner, name }) => {
   const [label, setLabel] = useState([]);
   const [issues, setIssues] = useState(initIssues);
   const [fetching, setFetching] = useState(false);
+
+  useEffect(() => {
+    if (!isServer) {
+      CACHE[`${owner}/${name}`] = labels;
+    }
+  }, [labels, name, owner]);
 
   const handleCreatorChange = useCallback(value => {
     setCreator(value);
@@ -119,22 +151,25 @@ export const Issues = ({ initIssues, labels, owner, name }) => {
     setLabel(value);
   }, []);
 
-  const handleSearch = useCallback(async () => {
+  const handleSearch = () => {
     setFetching(true);
-    try {
-      const result = await api.request({
+    api
+      .request({
         url: `/repos/${owner}/${name}/issues${buildQuery(
           creator,
           state,
           label
         )}`
+      })
+      .then(res => {
+        setIssues(res.data);
+        setFetching(false);
+      })
+      .catch(err => {
+        console.errpr(err);
+        setFetching(false);
       });
-      setIssues(result.data);
-    } catch (err) {
-      console.error(err);
-    }
-    setFetching(false);
-  }, [creator, label, name, owner, state]);
+  };
 
   const buildQuery = (creator, state, labels) => {
     let creatorQuery = creator ? `creator=${creator}` : "";
@@ -149,17 +184,17 @@ export const Issues = ({ initIssues, labels, owner, name }) => {
     if (stateQuery) queryArr.push(stateQuery);
     if (labelQuery) queryArr.push(labelQuery);
 
-    return `?${queryArr.join("$")}`;
+    return `?${queryArr.join("&")}`;
   };
 
   return (
     <>
       <div className="root">
-        <SearchUser onChange={handleCreatorChange} value={creator} />
-
         <div className="search">
+          <SearchUser onChange={handleCreatorChange} value={creator} />
+
           <Select
-            placeholder="Issue状态"
+            placeholder="状态"
             onChange={handleStateChange}
             value={state}
             style={{ width: 200, marginLeft: 20 }}
@@ -183,23 +218,21 @@ export const Issues = ({ initIssues, labels, owner, name }) => {
             ))}
           </Select>
 
-          {fetching ? (
-            <div className="loading">
-              <Spin />
-            </div>
-          ) : (
-            <div className="issues">
-              {issues.map(issue => (
-                <IssueItem issue={issue} key={issue.id} />
-              ))}
-            </div>
-          )}
-
           <Button type="primary" onClick={handleSearch} disabled={fetching}>
             搜索
           </Button>
         </div>
-
+        {fetching ? (
+          <div className="loading">
+            <Spin />
+          </div>
+        ) : (
+          <div className="issues">
+            {issues.map(issue => (
+              <IssueItem issue={issue} key={issue.id} />
+            ))}
+          </div>
+        )}
         <style jsx>{`
           .issues {
             border: 1px solid #eee;
@@ -226,6 +259,8 @@ export const Issues = ({ initIssues, labels, owner, name }) => {
 Issues.getInitialProps = async ({ ctx: { query, req, res } }) => {
   const { owner, name } = query;
 
+  const full_name = `${owner}/${name}`;
+
   const parallelFetch = await Promise.all([
     await api.request(
       {
@@ -234,13 +269,15 @@ Issues.getInitialProps = async ({ ctx: { query, req, res } }) => {
       req,
       res
     ),
-    await api.request(
-      {
-        url: `/repos/${owner}/${name}/labels`
-      },
-      req,
-      res
-    )
+    CACHE[full_name]
+      ? Promise.resolve({ data: CACHE[full_name] })
+      : await api.request(
+          {
+            url: `/repos/${owner}/${name}/labels`
+          },
+          req,
+          res
+        )
   ]);
 
   return {
