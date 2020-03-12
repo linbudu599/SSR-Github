@@ -1,12 +1,9 @@
-# SSR-Github-Projec
-
-> 进度：50%
+# SSR-Github
 
 ## 技术栈相关
 
 - React
 - Next.js
-- Typescript
 - Koa2
 - Redis
 - Antd

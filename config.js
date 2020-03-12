@@ -1,4 +1,5 @@
 module.exports = {
+  // Test Secret, doesn't matter
   github: {
     request_token_url: "https://github.com/login/oauth/access_token",
     client_id: "ad04002a40cf6273e253",
