@@ -59,7 +59,7 @@
     ]
   },
   "devDependencies": {
-    "chalk": "^3.0.0",
+    "chalk": "^4.1.0",
     "cross-env": "^6.0.3",
     "nodemon": "^2.0.2",
     "redux-devtools-extension": "^2.13.8",
